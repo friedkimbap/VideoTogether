@@ -3,6 +3,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.w3c.dom.stylesheets.DocumentStyle;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -12,7 +13,9 @@ import java.net.*;
 import java.util.Objects;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.DefaultStyledDocument;
 
 public class VideoClient extends JFrame{
     private JTextField t_input, t_userID, t_hostAddr, t_portNum;
@@ -26,17 +29,24 @@ public class VideoClient extends JFrame{
     private Thread receiveThread;
     private String uid;
 
+    private UserObj user; // 고유 user 객체
+
     private WebEngine webEngine;
 
     public VideoClient(String serverAddress, int serverPort) {
         super("With Talk");
+        VideoObj video = new VideoObj("브이로그");
+        video.o_name = "김영민";
+        user = new UserObj("김영민", UserObj.MODE_WatchingVideo, video);
+
+
 
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
 
         buildGUI();
 
-        setBounds(100,100,820,750);
+        setBounds(100,100,939,387);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         setVisible(true);
@@ -46,18 +56,20 @@ public class VideoClient extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        add(createDisplayPanel(), BorderLayout.CENTER);
+//        add(createDisplayPanel(), BorderLayout.CENTER);
+//
+//        JPanel p = new JPanel(new BorderLayout());
+//        p.add(createInputPanel(),BorderLayout.NORTH);
+//        //p.add(createInfoPanel(), BorderLayout.CENTER);
+//        p.add(createControlPanel(), BorderLayout.SOUTH);
 
-        JPanel p = new JPanel(new BorderLayout());
-        p.add(createInputPanel(),BorderLayout.NORTH);
-        //p.add(createInfoPanel(), BorderLayout.CENTER);
-        p.add(createControlPanel(), BorderLayout.SOUTH);
-
-        add(p,BorderLayout.SOUTH);
+        add(VTPanel(),BorderLayout.SOUTH);
     }
 
     public JPanel createDisplayPanel() {
         JPanel p = new JPanel(new BorderLayout());
+        p.setPreferredSize(new Dimension(492, 387));
+        p.setMaximumSize(new Dimension(492, 387));
         t_display=  new JFXPanel(); // JFX패널을 사용하면 JFX 애플리케이션을 사용할 수 있음.(원래는 반대인데 이해하기 쉽게) 웹뷰나 웹엔진을 사용 가능
 
         Platform.runLater(()-> { // JFX 애플리케이션 스레드에서 작업을 실행하는 거임, 웹페이지의 변화를 안전하게 적용해줌, 모든 웹페이지에 변경할 사항들은 이 안에서 일어나게 해야함
@@ -146,6 +158,114 @@ public class VideoClient extends JFrame{
         });
 
         return p;
+    }
+
+    public JPanel VTPanel(){
+        JPanel VTPanel = new JPanel(new BorderLayout());
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setBackground(new Color(176,46,46));
+        leftPanel.setPreferredSize(new Dimension(213,387));
+
+        JLabel logoLabel = new JLabel();
+        logoLabel.setIcon(new ImageIcon("images/logo.png"));
+        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        logoLabel.setBackground(new Color(176,46,46));
+        logoLabel.setBorder(new EmptyBorder(30,0,0,0));
+
+
+        JLabel idLabel = new JLabel(user.name, SwingConstants.CENTER);
+        idLabel.setOpaque(true);
+        idLabel.setBackground(new Color(176,46,46));
+        idLabel.setForeground(Color.WHITE);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        buttonPanel.setBackground(new Color(176, 46, 46));
+        buttonPanel.setBorder(new EmptyBorder(0, 10, 10, 10));
+
+        JLabel stopButton = new JLabel(new ImageIcon("images/btnstop.png"));
+        stopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        stopButton.setPreferredSize(new Dimension(125, 49));
+        stopButton.setMinimumSize(new Dimension(125, 49));
+        stopButton.setMaximumSize(new Dimension(125, 49));
+        stopButton.setBorder(new EmptyBorder(0, 0, 20, 0));
+
+        JPanel skipPanel = new JPanel();
+        skipPanel.setLayout(new BoxLayout(skipPanel, BoxLayout.LINE_AXIS));
+
+        JLabel prevButton = new JLabel(new ImageIcon("images/btnprev.png"));
+        prevButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        prevButton.setPreferredSize(new Dimension(57, 29));
+        prevButton.setMinimumSize(new Dimension(57, 29));
+        prevButton.setMaximumSize(new Dimension(57, 29));
+
+
+        JLabel nextButton = new JLabel(new ImageIcon("images/btnnext.png"));
+        nextButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nextButton.setPreferredSize(new Dimension(57, 29));
+        nextButton.setMinimumSize(new Dimension(57, 29));
+        nextButton.setMaximumSize(new Dimension(57, 29));
+
+        JPanel spacePanel = new JPanel();
+        spacePanel.setBackground(new Color(176, 46, 46));
+        spacePanel.setMaximumSize(new Dimension(11, 29));
+        spacePanel.setPreferredSize(new Dimension(11, 29));
+
+        buttonPanel.add(stopButton);
+        skipPanel.add(prevButton);
+        skipPanel.add(spacePanel);
+        skipPanel.add(nextButton);
+        buttonPanel.add(skipPanel);
+
+        leftPanel.add(logoLabel, BorderLayout.NORTH);
+        leftPanel.add(idLabel, BorderLayout.CENTER);
+        leftPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setPreferredSize(new Dimension(213,387));
+
+        JPanel infoPanel = new JPanel(new GridLayout(2,2));
+        infoPanel.setBackground(new Color(219,127,35));
+
+        JLabel titleLabel = new JLabel(user.video.name, SwingConstants.CENTER);
+        titleLabel.setFont(new Font(null, Font.BOLD, 20));
+        titleLabel.setForeground(Color.WHITE);
+        infoPanel.add(titleLabel);
+
+        JLabel participantsLabel = new JLabel("접속자 수 : " + user.video.user_num, SwingConstants.CENTER);
+        participantsLabel.setFont(new Font(null, Font.PLAIN, 14));
+        participantsLabel.setForeground(Color.WHITE);
+        infoPanel.add(participantsLabel);
+
+        JLabel ownerLabel = new JLabel("주최자 : " + user.video.o_name, SwingConstants.CENTER);
+        ownerLabel.setFont(new Font(null, Font.PLAIN, 14));
+        ownerLabel.setForeground(Color.WHITE);
+        infoPanel.add(ownerLabel);
+
+        JButton exitButton = new JButton(new ImageIcon("images/btnexit.png"));
+        exitButton.setMaximumSize(new Dimension(72,20));
+        exitButton.setPreferredSize(new Dimension(71,20));
+        infoPanel.add(exitButton);
+
+        rightPanel.add(infoPanel, BorderLayout.NORTH);
+
+        DefaultStyledDocument document = new DefaultStyledDocument();
+        JTextPane t_display= new JTextPane(document);
+        t_display.setBackground(new Color(176,46,46));
+        t_display.setEditable(false);
+
+        JScrollPane scrollPane = new JScrollPane(t_display);
+
+        rightPanel.add(scrollPane, BorderLayout.CENTER);
+
+        rightPanel.add(createInputPanel(),BorderLayout.SOUTH);
+
+        add(leftPanel, BorderLayout.WEST);
+        add(createDisplayPanel(), BorderLayout.CENTER);
+        add(rightPanel, BorderLayout.EAST);
+
+        setSize(900, 600);
+        return VTPanel;
     }
 
 //    public JPanel createInfoPanel() {

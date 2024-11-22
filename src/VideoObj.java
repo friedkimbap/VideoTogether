@@ -1,24 +1,28 @@
-// 2071173 김영민
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ImageIcon;
 
 public class VideoObj implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public final static int MODE_LOGIN = 0x1;
-    public final static int MODE_LOGOUT = 0x2;
+    public final static int MODE_Create = 1;
+    public final static int MODE_Play = 2;
+    public final static int MODE_Pause = 3;
+    public final static int Mode_ChangeTime = 5;
 
-    public final static int MODE_NOTSTARTED = -1;
-    public final static int MODE_ENDED = 0;
-    public final static int MODE_PLAYING = 1;
-    public final static int MODE_PAUSED = 2;
-    public final static int MODE_BUFFERING = 3;
-    public final static int MODE_VIDEOCUED = 5;
-
-
+    String id; // 영상 ID
     String name;
-    String user_num;
+    String o_name;
+    int videoMode;
+    int videoTime;
+    int user_num = 1;
 
+
+    VideoObj(String name) {
+        this.name = name;
+        user_num = 0;
+    }
 }
