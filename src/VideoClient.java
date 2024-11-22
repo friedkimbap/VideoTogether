@@ -192,7 +192,6 @@ public class VideoClient extends JFrame{
         });
 
         b_disconnect.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 Platform.runLater(()->{

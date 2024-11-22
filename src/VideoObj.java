@@ -18,38 +18,7 @@ public class VideoObj implements Serializable {
     public final static int MODE_VIDEOCUED = 5;
 
 
-    String userID;
-    int mode;
-    String message;
-    ImageIcon image;
-    long size;
-
-    public VideoObj(String userID, int mode, String message, ImageIcon image, long size){
-        this.userID = userID;
-        this.mode = mode;
-        this.message = message;
-        this.image = image;
-        this.size = size;
-    }
-
-    public VideoObj(String userID, int mode, String message, ImageIcon icon){
-        this(userID,mode,message,icon,0);
-    }
-
-    public VideoObj(String userID, int mode, String message){
-        this(userID,mode,message,null);
-    }
-
-//  public ChatMsg(String userID, int mode, ImageIcon icon){
-//    this(userID,mode,null,icon);
-//  }
-
-    public VideoObj(String userID, int mode, String filename, long size){
-        this(userID,mode,filename,null, size);
-    }
-
-    public VideoObj(String userID, int mode){
-        this(userID,mode,null,null);
-    }
+    String name;
+    String user_num;
 
 }
