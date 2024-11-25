@@ -1,14 +1,12 @@
-import com.teamdev.jxbrowser.browser.Browser;
-import com.teamdev.jxbrowser.engine.Engine;
-import com.teamdev.jxbrowser.engine.EngineOptions;
-import com.teamdev.jxbrowser.engine.RenderingMode;
-import com.teamdev.jxbrowser.view.swt.BrowserView;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javax.swing.border.LineBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 import org.w3c.dom.stylesheets.DocumentStyle;
 
 import java.awt.*;
@@ -26,8 +24,9 @@ import javax.swing.text.DefaultStyledDocument;
 public class VideoClient extends JFrame{
     private JTextField t_input, t_userID;
     private JFXPanel t_display;
-    private JButton b_send, b_select;
-    private JLabel startOrpauseButton;
+    private JTextPane chat_display;
+    private StyledDocument document;
+    private JLabel startOrpauseButton,b_send, b_select;
     private String serverAddress;
     private int serverPort;
     private Socket socket;
@@ -125,11 +124,14 @@ public class VideoClient extends JFrame{
         FileNameExtensionFilter imgFilter = new FileNameExtensionFilter("Image File", "png", "jpg", "gif");
 
         t_input = new JTextField();
-        b_send = new JButton("보내기");
-        b_select = new JButton("선택하기");
+        t_input.setBackground(new Color(219,127,35));
+        t_input.setBorder(new LineBorder(new Color(219,127,35)));
+        b_send = new JLabel(new ImageIcon("images/sendbutton.png"));
+        b_select = new JLabel(new ImageIcon("images/selectbutton.png"));
 
 
         p.add(t_input, BorderLayout.CENTER);
+        buttonPanel.setBackground(new Color(219,127,35));
         buttonPanel.add(b_send);
         buttonPanel.add(b_select);
         p.add(buttonPanel, BorderLayout.EAST);
@@ -141,19 +143,32 @@ public class VideoClient extends JFrame{
         chooser.addChoosableFileFilter(imgFilter);
         chooser.setAcceptAllFileFilterUsed(false);
 
-        ActionListener actionListener = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //sendMessage();
+
+        b_send.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                user.mode = UserObj.MODE_ChatStr;
+                if(!(user.chat = t_input.getText()).isEmpty()){
+                    send(user);
+                    t_input.setText("");
+                }
             }
-        };
-
-        b_send.addActionListener(actionListener);
-        t_input.addActionListener(actionListener);
-
-        b_select.addActionListener(new ActionListener() {
-
+        });
+        t_input.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                user.mode = UserObj.MODE_ChatStr;
+                if(!(user.chat = t_input.getText()).isEmpty()){
+                    send(user);
+                    t_input.setText("");
+                }
+            }
+        });
+
+        b_select.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
 
                 int ret = chooser.showOpenDialog(VideoClient.this);
                 if (ret != JFileChooser.APPROVE_OPTION) {
@@ -185,6 +200,7 @@ public class VideoClient extends JFrame{
 
         return p;
     }
+
 
     public JPanel VTPanel(){
         JPanel VTPanel = new JPanel(new BorderLayout());
@@ -293,9 +309,10 @@ public class VideoClient extends JFrame{
 
         rightPanel.add(infoPanel, BorderLayout.NORTH);
 
-        DefaultStyledDocument document = new DefaultStyledDocument();
-        JTextPane chat_display= new JTextPane(document);
+        document = new DefaultStyledDocument();
+        chat_display= new JTextPane(document);
         chat_display.setBackground(new Color(176,46,46));
+        chat_display.setBorder(new LineBorder(new Color(176,46,46)));
         chat_display.setEditable(false);
 
         JScrollPane scrollPane = new JScrollPane(chat_display);
@@ -454,6 +471,10 @@ public class VideoClient extends JFrame{
 
                             }
                         }
+                        else if(user.mode == UserObj.MODE_ChatStr) {
+                            String chat = inMsg.chat;
+                            printDisplay(chat);
+                        }
                     } catch (IOException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
 
@@ -485,6 +506,19 @@ public class VideoClient extends JFrame{
             out.flush();
         } catch (IOException e) {
             System.err.println(">> 클라이언트 일반 전송 오류: "+e.getMessage());
+        }
+    }
+
+    public void printDisplay(String str){
+        int len = chat_display.getDocument().getLength();
+
+        chat_display.setCaretPosition(len);
+        chat_display.setForeground(Color.WHITE);
+
+        try {
+            document.insertString(len,str+"\n",null);
+        } catch (BadLocationException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -14,7 +14,7 @@ function onYouTubeIframeAPIReady() {
             'modestbranding': 1, // YouTube 로고 숨기기
             'rel': 0, // 관련 동영상 숨기기
             'autoplay': 0, // 자동 재생
-            'enablejsapi': 1, // js로 제어 가능토록 하는 거
+            'enablejsapi': 0, // js로 제어 가능토록 하는 거
         },
         events: {
             'onReady': onPlayerReady,
@@ -35,7 +35,6 @@ function onPlayerStateChange(event) {
     } else if (event.data === YT.PlayerState.ENDED) {
         action = 'stop';
     } else if (event.data === YT.PlayerState.BUFFERING) {
-        action = 'pause';
     }
     if (action) {
         sendMessage(action);
