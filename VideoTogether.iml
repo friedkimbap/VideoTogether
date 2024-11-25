@@ -28,5 +28,15 @@
         <jarDirectory url="file://$MODULE_DIR$/../../Program Files/JAVA/javafx-sdk-23.0.1/lib" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../Program Files/JAVA/jxbrowser-7.21-cross-desktop-win_mac_linux/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../../Program Files/JAVA/jxbrowser-7.21-cross-desktop-win_mac_linux/lib" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>
