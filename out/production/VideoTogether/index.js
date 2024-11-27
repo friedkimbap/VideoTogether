@@ -7,14 +7,15 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
+        width: 760,
+        height: 563,
         videoId: 'Ox29z5Nf1Uk', // 유튜브 링크 뒤에 id 있음
         playerVars: { // https://developers.google.com/youtube/player_parameters?hl=ko 참조
-            'controls': 1, // 플레이어 컨트롤 숨기기
+            'controls': 0, // 플레이어 컨트롤 숨기기
             'fs': 0, // 전체화면 버튼 숨기기
             'modestbranding': 1, // YouTube 로고 숨기기
             'rel': 0, // 관련 동영상 숨기기
-            'autoplay': 0, // 자동 재생
-            'enablejsapi': 0, // js로 제어 가능토록 하는 거
+            'enablejsapi': 1, // js로 제어 가능토록 하는 거
         },
         events: {
             'onReady': onPlayerReady,

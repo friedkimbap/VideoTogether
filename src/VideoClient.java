@@ -96,7 +96,7 @@ public class VideoClient extends JFrame{
             webEngine.load(getClass().getResource("./index.html").toExternalForm()); // 이게 index.html을 띄우는거임 클래스의 경로에서 index.html을 찾아내는거임, 그리고 이거를 알맞은 형식으로 바꾸는거
             webEngine.setOnError(event -> System.out.println("JavaScript Error: " + event.getMessage()));
             webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");
-            webView.setDisable(false);
+            webView.setDisable(true);
 
             Scene scene = new Scene(webView); // Scene 클래스 역시 jfx 애플리케이션의 그래픽처리를 담당함
             t_display.setScene(scene);
@@ -429,6 +429,8 @@ public class VideoClient extends JFrame{
 
             public void receiveMessage() {
                 try {
+                        Object Msg;
+
                         UserObj inMsg = (UserObj) in.readObject();
                         if (inMsg == null) {
                             disconnect();
@@ -459,7 +461,7 @@ public class VideoClient extends JFrame{
                                         @Override
                                         public void run() {
                                             webEngine.executeScript("setTime("+user.video.videoTime+");");
-                                            webEngine.executeScript("setTime("+user.video.videoTime+");");
+
                                         }
                                     });
                                     if(startOrpauseButton.getIcon() == startIcon){
@@ -474,6 +476,7 @@ public class VideoClient extends JFrame{
                         else if(user.mode == UserObj.MODE_ChatStr) {
                             String chat = inMsg.chat;
                             printDisplay(chat);
+                            user.mode = UserObj.MODE_WatchingVideo;
                         }
                     } catch (IOException | ClassNotFoundException e) {
                     throw new RuntimeException(e);

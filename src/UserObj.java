@@ -12,7 +12,7 @@ public class UserObj implements Serializable {
   public final static int MODE_StartVideo = 5; // 상영회 개설
   public final static int MODE_EndVideo = 6; // 상영회 종료
   public final static int MODE_ChatStr = 7;
-  public final static int MODE_VideoList = 8;
+  public final static int MODE_VideoList = 8; // 비디오 리스트 전송(StoC)
 
 
   String name;
